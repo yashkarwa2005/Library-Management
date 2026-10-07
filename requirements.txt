@@ -1,0 +1,17 @@
+# ==============================================================================
+# Library Management System - Requirements Specification
+# Academic PBL Submission: Agile Methodologies (AM)
+# Author / Scrum Lead: Annika Jha
+# ==============================================================================
+
+# Core Application Architecture:
+# The core application runs completely out-of-the-box using the Python 3.8+ Standard Library:
+# - sqlite3      : ACID-compliant relational persistence engine
+# - hashlib      : Cryptographic SHA-256 password salting and hashing
+# - http.server  : Embedded multi-threaded HTTP web and REST API server
+# - unittest     : Automated test suite runner
+# - json, urllib : API payload encoding and communication
+
+# Optional enhancements for enriched terminal console formatting:
+colorama>=0.4.6
+tabulate>=0.9.0
