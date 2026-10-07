@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agile Scrum Kanban Board | Library Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0d1117;
+      --bg-card: #161b22;
+      --bg-col: #0f141c;
+      --border: #30363d;
+      --border-focus: #58a6ff;
+      --text-main: #e6edf3;
+      --text-muted: #8b949e;
+      
+      /* Priority Colors */
+      --prio-high-bg: rgba(248, 81, 73, 0.15);
+      --prio-high-border: #f85149;
+      --prio-high-text: #ff7b72;
+      
+      --prio-med-bg: rgba(210, 153, 34, 0.15);
+      --prio-med-border: #d29922;
+      --prio-med-text: #e3b341;
+      
+      --prio-low-bg: rgba(46, 160, 67, 0.15);
+      --prio-low-border: #2ea043;
+      --prio-low-text: #56d364;
+
+      --blue-accent: #1f6feb;
+      --emerald-accent: #238636;
+      --purple-accent: #8957e5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navbar */
+    header {
+      background: #010409;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #238636, #1f6feb);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .brand-title h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #238636;
+      color: #ffffff;
+      border-color: rgba(240, 246, 252, 0.1);
+    }
+    .btn-primary:hover { background: #2ea043; }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover {
+      background: #21262d;
+      border-color: #8b949e;
+    }
+
+    /* Metrics Bar */
+    .metrics-bar {
+      background: #0d1117;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .metrics-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .metric-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .metric-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-select {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    /* Board Container */
+    .board-wrapper {
+      flex: 1;
+      padding: 20px 24px;
+      overflow-x: auto;
+    }
+
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(290px, 1fr));
+      gap: 16px;
+      align-items: flex-start;
+      min-width: 1480px;
+    }
+
+    .column {
+      background: var(--bg-col);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 170px);
+    }
+
+    .column-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: var(--bg-col);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      z-index: 10;
+    }
+
+    .column-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .column-counter {
+      background: rgba(110, 118, 129, 0.2);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .column-cards {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      min-height: 200px;
+      flex: 1;
+    }
+
+    .column-cards.drag-over {
+      background: rgba(88, 166, 255, 0.05);
+      border: 2px dashed var(--border-focus);
+      border-radius: 6px;
+    }
+
+    /* Kanban Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: grab;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .card:active { cursor: grabbing; }
+
+    .card:hover {
+      border-color: #58a6ff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .card.dragging {
+      opacity: 0.4;
+      border: 2px dashed #58a6ff;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #58a6ff;
+    }
+
+    .priority-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid;
+    }
+
+    .prio-high {
+      background: var(--prio-high-bg);
+      border-color: var(--prio-high-border);
+      color: var(--prio-high-text);
+    }
+
+    .prio-med {
+      background: var(--prio-med-bg);
+      border-color: var(--prio-med-border);
+      color: var(--prio-med-text);
+    }
+
+    .prio-low {
+      background: var(--prio-low-bg);
+      border-color: var(--prio-low-border);
+      color: var(--prio-low-text);
+    }
+
+    .card-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #fff;
+    }
+
+    .card-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid rgba(48, 54, 61, 0.6);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .points-badge {
+      background: rgba(137, 87, 229, 0.15);
+      color: #d2a8ff;
+      border: 1px solid rgba(137, 87, 229, 0.4);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    .assignee-info {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .avatar {
+      width: 18px;
+      height: 18px;
+      background: #238636;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .avatar.team { background: #1f6feb; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <div class="brand-icon">📚</div>
+      <div class="brand-title">
+        <h1>Library Management System — Scrum Kanban Board</h1>
+        <p>B.Tech Agile Methodologies (AM) PBL | Student / Scrum Lead: <strong>Annika Jha</strong></p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/" class="btn btn-secondary">🏠 Back to App Dashboard</a>
+      <button class="btn btn-primary" onclick="resetBoard()">🔄 Reset to Sprint 5 Baseline</button>
+    </div>
+  </header>
+
+  <!-- Metrics Bar -->
+  <div class="metrics-bar">
+    <div class="metrics-group">
+      <div class="metric-item">
+        <span class="metric-label">Total Backlog</span>
+        <span class="metric-value">12 Stories (51 Pts)</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">Completed Velocity</span>
+        <span class="metric-value" style="color: #56d364;">51 / 51 Pts (100%)</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">Active Iteration</span>
+        <span class="metric-value">Sprint 5 (Final Release)</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">WIP Limit</span>
+        <span class="metric-value" style="color: #e3b341;">Max 3 per Dev</span>
+      </div>
+    </div>
+
+    <div class="filter-controls">
+      <label style="font-size: 0.8rem; color: var(--text-muted);">Filter Sprint:</label>
+      <select class="filter-select" id="sprintFilter" onchange="filterCards()">
+        <option value="all">All Sprints (1 to 5)</option>
+        <option value="Sprint 1">Sprint 1 - Security & Auth</option>
+        <option value="Sprint 2">Sprint 2 - Catalog & Search</option>
+        <option value="Sprint 3">Sprint 3 - Circulation & Issue</option>
+        <option value="Sprint 4">Sprint 4 - Renewals & Fines</option>
+        <option value="Sprint 5">Sprint 5 - Scrum & Release</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Board Columns -->
+  <div class="board-wrapper">
+    <div class="kanban-board">
+
+      <!-- Column 1: Backlog -->
+      <div class="column" data-col="Backlog">
+        <div class="column-header">
+          <div class="column-title">
+            <span>📋 Backlog</span>
+          </div>
+          <span class="column-counter" id="count-Backlog">0</span>
+        </div>
+        <div class="column-cards" id="col-Backlog">
+          <!-- Future Scope Cards -->
+          <div class="card" draggable="true" data-sprint="Future" data-prio="low">
+            <div class="card-top">
+              <span class="card-id">US-EXT-1</span>
+              <span class="priority-badge prio-low">🟢 Could Have</span>
+            </div>
+            <div class="card-title">RFID Smart Gate & Self-Kiosk Integration</div>
+            <div class="card-desc">Integrate UHF RFID hardware sensors for contactless automated check-in and antitheft gate alarms.</div>
+            <div class="card-footer">
+              <span class="points-badge">5 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Unassigned</span>
+              </div>
+            </div>
+          </div>
+          <div class="card" draggable="true" data-sprint="Future" data-prio="low">
+            <div class="card-top">
+              <span class="card-id">US-EXT-2</span>
+              <span class="priority-badge prio-low">🟢 Could Have</span>
+            </div>
+            <div class="card-title">Automated SMS & WhatsApp Due Date Alerts</div>
+            <div class="card-desc">Send automated courtesy notification reminders to students 24 hours prior to loan expiry.</div>
+            <div class="card-footer">
+              <span class="points-badge">3 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Unassigned</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: To Do -->
+      <div class="column" data-col="To Do">
+        <div class="column-header">
+          <div class="column-title">
+            <span>🔵 To Do</span>
+          </div>
+          <span class="column-counter" id="count-To Do">0</span>
+        </div>
+        <div class="column-cards" id="col-To Do">
+          <div class="card" draggable="true" data-sprint="Sprint 5" data-prio="low">
+            <div class="card-top">
+              <span class="card-id">AI-EXT-3</span>
+              <span class="priority-badge prio-low">🟢 Low</span>
+            </div>
+            <div class="card-title">Prepare Post-Viva Documentation Archive</div>
+            <div class="card-desc">Bundle submission artifacts and test logs for university lab archive.</div>
+            <div class="card-footer">
+              <span class="points-badge">1 pt</span>
+              <div class="assignee-info">
+                <span class="avatar">A</span>
+                <span>Annika Jha</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 3: In Progress -->
+      <div class="column" data-col="In Progress">
+        <div class="column-header">
+          <div class="column-title">
+            <span>🟡 In Progress</span>
+          </div>
+          <span class="column-counter" id="count-In Progress">0</span>
+        </div>
+        <div class="column-cards" id="col-In Progress">
+          <div class="card" draggable="true" data-sprint="Sprint 5" data-prio="med">
+            <div class="card-top">
+              <span class="card-id">AI-18</span>
+              <span class="priority-badge prio-med">🟠 Medium</span>
+            </div>
+            <div class="card-title">Conduct Sprint Review, Retrospective & Viva Rehearsal</div>
+            <div class="card-desc">Final verification of all 16 test cases, live walkthrough verification, and presentation rehearsal.</div>
+            <div class="card-footer">
+              <span class="points-badge">2 pts</span>
+              <div class="assignee-info">
+                <span class="avatar">A</span>
+                <span>Annika Jha</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 4: Review / Testing -->
+      <div class="column" data-col="Review/Testing">
+        <div class="column-header">
+          <div class="column-title">
+            <span>🟣 Review / Testing</span>
+          </div>
+          <span class="column-counter" id="count-Review/Testing">0</span>
+        </div>
+        <div class="column-cards" id="col-Review/Testing">
+          <div class="card" draggable="true" data-sprint="Sprint 5" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">AI-17</span>
+              <span class="priority-badge prio-high">🔴 High</span>
+            </div>
+            <div class="card-title">Execute 16-Case Automated Test Suite Verification</div>
+            <div class="card-desc">Run unittest runner across authentication, circulation, quotas, overdue calculations, and concurrency.</div>
+            <div class="card-footer">
+              <span class="points-badge">3 pts</span>
+              <div class="assignee-info">
+                <span class="avatar">A</span>
+                <span>Annika Jha</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 5: Done -->
+      <div class="column" data-col="Done">
+        <div class="column-header">
+          <div class="column-title">
+            <span>🟢 Done</span>
+          </div>
+          <span class="column-counter" id="count-Done">0</span>
+        </div>
+        <div class="column-cards" id="col-Done">
+          <!-- US-01 -->
+          <div class="card" draggable="true" data-sprint="Sprint 1" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-01</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">Member Registration & Credential Hashing</div>
+            <div class="card-desc">Unique usernames, email validation, and secure SHA-256 password salting.</div>
+            <div class="card-footer">
+              <span class="points-badge">3 pts</span>
+              <div class="assignee-info">
+                <span class="avatar">A</span>
+                <span>Annika Jha</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-02 -->
+          <div class="card" draggable="true" data-sprint="Sprint 1" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-02</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">Role-Based Authentication & Session Management</div>
+            <div class="card-desc">Session credential verification with member, librarian, and admin roles.</div>
+            <div class="card-footer">
+              <span class="points-badge">3 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Dev Team</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-03 -->
+          <div class="card" draggable="true" data-sprint="Sprint 2" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-03</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">Book Catalog Management & Shelf Tracking</div>
+            <div class="card-desc">Add, update, and categorize library textbooks with ISBN and shelf locations.</div>
+            <div class="card-footer">
+              <span class="points-badge">5 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Dev Team</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-04 -->
+          <div class="card" draggable="true" data-sprint="Sprint 2" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-04</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">Advanced Book Search & Category Filtering</div>
+            <div class="card-desc">Case-insensitive substring search matching title, author, ISBN, and genre.</div>
+            <div class="card-footer">
+              <span class="points-badge">3 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Dev Team</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-05 -->
+          <div class="card" draggable="true" data-sprint="Sprint 2" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-05</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">Real-time Book Availability & Copy Inspection</div>
+            <div class="card-desc">Dynamic query of total copies, on-shelf copies, and borrowed counts.</div>
+            <div class="card-footer">
+              <span class="points-badge">3 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Dev Team</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-06 -->
+          <div class="card" draggable="true" data-sprint="Sprint 3" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-06</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">Atomic Book Issue & Concurrency Control</div>
+            <div class="card-desc">Immediate 14-day checkout with quota checks and transactional stock decrement.</div>
+            <div class="card-footer">
+              <span class="points-badge">8 pts</span>
+              <div class="assignee-info">
+                <span class="avatar">A</span>
+                <span>Annika Jha</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-07 -->
+          <div class="card" draggable="true" data-sprint="Sprint 3" data-prio="med">
+            <div class="card-top">
+              <span class="card-id">US-07</span>
+              <span class="priority-badge prio-med">🟠 Should Have</span>
+            </div>
+            <div class="card-title">Member Loan History & Due Date Overview</div>
+            <div class="card-desc">Personal loan ledger with borrow dates, return stamps, and overdue warnings.</div>
+            <div class="card-footer">
+              <span class="points-badge">3 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Dev Team</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-08 -->
+          <div class="card" draggable="true" data-sprint="Sprint 3" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-08</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">Book Return & Automated Inventory Recovery</div>
+            <div class="card-desc">Marks loan returned and atomically restores available copy count.</div>
+            <div class="card-footer">
+              <span class="points-badge">5 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Dev Team</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-09 -->
+          <div class="card" draggable="true" data-sprint="Sprint 4" data-prio="med">
+            <div class="card-top">
+              <span class="card-id">US-09</span>
+              <span class="priority-badge prio-med">🟠 Should Have</span>
+            </div>
+            <div class="card-title">Self-Service Book Renewal & Reservation Queue</div>
+            <div class="card-desc">14-day loan extension guard and reservation hold for out-of-stock titles.</div>
+            <div class="card-footer">
+              <span class="points-badge">5 pts</span>
+              <div class="assignee-info">
+                <span class="avatar">A</span>
+                <span>Annika Jha</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-10 -->
+          <div class="card" draggable="true" data-sprint="Sprint 4" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-10</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">Automated Overdue Fine Calculation & Settlement</div>
+            <div class="card-desc">Calculates ₹5/day late fees upon return with itemized payment settlement.</div>
+            <div class="card-footer">
+              <span class="points-badge">5 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Dev Team</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-11 -->
+          <div class="card" draggable="true" data-sprint="Sprint 5" data-prio="low">
+            <div class="card-top">
+              <span class="card-id">US-11</span>
+              <span class="priority-badge prio-low">🟢 Could Have</span>
+            </div>
+            <div class="card-title">Centralized Librarian & Admin Inventory Audit</div>
+            <div class="card-desc">Aggregated metrics, circulation audits, overdue reports, and fine totals.</div>
+            <div class="card-footer">
+              <span class="points-badge">3 pts</span>
+              <div class="assignee-info">
+                <span class="avatar team">T</span>
+                <span>Dev Team</span>
+              </div>
+            </div>
+          </div>
+          <!-- US-12 -->
+          <div class="card" draggable="true" data-sprint="Sprint 5" data-prio="high">
+            <div class="card-top">
+              <span class="card-id">US-12</span>
+              <span class="priority-badge prio-high">🔴 Must Have</span>
+            </div>
+            <div class="card-title">In-App Scrum Backlog, Sprint & Terminal Kanban Engine</div>
+            <div class="card-desc">SQLite-backed Agile tables with 5-column Kanban board rendering and velocity metrics.</div>
+            <div class="card-footer">
+              <span class="points-badge">8 pts</span>
+              <div class="assignee-info">
+                <span class="avatar">A</span>
+                <span>Annika Jha</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Drag & Drop Implementation
+    let draggedCard = null;
+
+    function initDragAndDrop() {
+      const cards = document.querySelectorAll('.card');
+      const columns = document.querySelectorAll('.column-cards');
+
+      cards.forEach(card => {
+        card.addEventListener('dragstart', (e) => {
+          draggedCard = card;
+          card.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', '');
+        });
+
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+          draggedCard = null;
+          updateCounters();
+        });
+      });
+
+      columns.forEach(col => {
+        col.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          col.classList.add('drag-over');
+        });
+
+        col.addEventListener('dragleave', () => {
+          col.classList.remove('drag-over');
+        });
+
+        col.addEventListener('drop', (e) => {
+          e.preventDefault();
+          col.classList.remove('drag-over');
+          if (draggedCard) {
+            col.appendChild(draggedCard);
+            updateCounters();
+          }
+        });
+      });
+
+      updateCounters();
+    }
+
+    function updateCounters() {
+      const cols = ["Backlog", "To Do", "In Progress", "Review/Testing", "Done"];
+      cols.forEach(c => {
+        const el = document.getElementById('col-' + c);
+        const cnt = document.getElementById('count-' + c);
+        if (el && cnt) {
+          // Count only visible cards
+          const visible = Array.from(el.querySelectorAll('.card')).filter(card => card.style.display !== 'none');
+          cnt.innerText = visible.length;
+        }
+      });
+    }
+
+    function filterCards() {
+      const filter = document.getElementById('sprintFilter').value;
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        const sp = card.getAttribute('data-sprint');
+        if (filter === 'all' || sp === filter) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      updateCounters();
+    }
+
+    function resetBoard() {
+      location.reload();
+    }
+
+    window.onload = () => {
+      initDragAndDrop();
+    };
+  </script>
+</body>
+</html>
