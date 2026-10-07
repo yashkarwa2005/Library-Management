@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System | Agile Scrum PBL</title>
+  <style>
+    :root {
+      --bg-primary: #0a0f1d;
+      --bg-secondary: #111827;
+      --bg-card: #1e293b;
+      --bg-card-hover: #283548;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --cyan: #06b6d4;
+      --indigo: #6366f1;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+    .brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(30, 41, 59, 0.6);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .tab-btn.active {
+      color: #fff;
+      background: var(--accent);
+      box-shadow: 0 2px 10px var(--accent-glow);
+    }
+
+    .user-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .role-pill {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .role-member { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .role-librarian { background: rgba(6, 182, 212, 0.2); color: #38bdf8; }
+    .role-admin { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover { background: rgba(51, 65, 85, 0.8); }
+    .btn-danger { background: var(--danger); }
+    .btn-danger:hover { background: #dc2626; }
+
+    /* Quick Login Banner */
+    .quick-bar {
+      background: #0f172a;
+      border-bottom: 1px solid var(--border-color);
+      padding: 8px 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .quick-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .quick-chip:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--accent);
+      color: #34d399;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      padding: 24px 28px;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 4px; height: 100%;
+      background: var(--accent);
+    }
+    .stat-card.blue::before { background: var(--cyan); }
+    .stat-card.indigo::before { background: var(--indigo); }
+    .stat-card.amber::before { background: var(--warning); }
+    .stat-card.red::before { background: var(--danger); }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat-value { font-size: 1.7rem; font-weight: 700; color: #fff; }
+
+    /* Search & Filter Bar */
+    .filter-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-input {
+      flex: 1;
+      min-width: 250px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .filter-input:focus { border-color: var(--accent); }
+    .filter-select {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      min-width: 160px;
+    }
+
+    /* Books Grid */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .book-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+    .book-card:hover {
+      transform: translateY(-3px);
+      border-color: #475569;
+      background: var(--bg-card-hover);
+    }
+    .book-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .book-category {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #38bdf8;
+      background: rgba(6, 182, 212, 0.15);
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .book-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+    .book-author {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .book-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .book-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+    }
+    .stock-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .stock-in { color: #34d399; }
+    .stock-out { color: #f87171; }
+
+    /* Tables */
+    .data-table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+    th {
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+      color: var(--text-main);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    /* Kanban Board Layout */
+    .kanban-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+    }
+    .kanban-column {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      min-width: 230px;
+      max-height: 75vh;
+    }
+    .col-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.6);
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+    }
+    .col-badge {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+    }
+    .col-cards {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .kanban-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .kanban-card:hover {
+      border-color: #475569;
+      transform: translateY(-2px);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+    .card-code { font-weight: 700; color: #38bdf8; }
+    .card-prio {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .prio-high { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+    .prio-med { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+    .prio-low { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+    .card-text { font-size: 0.85rem; color: #fff; line-height: 1.3; }
+    .card-bot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(51, 65, 85, 0.4);
+      padding-top: 6px;
+    }
+
+    /* Modals & Dialogs */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 520px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .modal-head h3 { font-size: 1.2rem; color: #fff; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; }
+    .form-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; }
+    .form-input {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--accent); }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      display: none;
+      z-index: 300;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 16px 28px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">📚</div>
+      <div class="brand-text">
+        <h1>ATHENAEUM LIBRARY MANAGEMENT SYSTEM</h1>
+        <p>Agile Methodologies (AM) PBL | Author / Scrum Lead: <strong>Annika Jha</strong></p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('catalog')">📖 Catalog</button>
+      <button class="tab-btn" onclick="switchTab('circulation')">🔄 Circulation</button>
+      <button class="tab-btn" onclick="switchTab('member')">👤 Member Portal</button>
+      <button class="tab-btn" onclick="switchTab('admin')">🏛️ Admin & Stats</button>
+      <button class="tab-btn" onclick="switchTab('scrum')">📊 Agile Kanban</button>
+    </div>
+
+    <!-- User Controls -->
+    <div class="user-controls">
+      <div class="user-badge" id="userBadge">
+        <span>👤</span>
+        <strong id="sessionUserName">Aarav Patel</strong>
+        <span class="role-pill role-member" id="sessionRole">Member</span>
+      </div>
+      <button class="btn btn-secondary" onclick="openLoginModal()">Switch User</button>
+    </div>
+  </header>
+
+  <!-- Quick User Switch Bar -->
+  <div class="quick-bar">
+    <span>⚡ Quick Logins:</span>
+    <span class="quick-chip" onclick="quickLogin('aarav_p', 'aarav123')">Aarav Patel (Member)</span>
+    <span class="quick-chip" onclick="quickLogin('diya_s', 'diya123')">Diya Sharma (Member with Overdue Fine)</span>
+    <span class="quick-chip" onclick="quickLogin('librarian_anita', 'anita123')">Anita Roy (Librarian)</span>
+    <span class="quick-chip" onclick="quickLogin('admin', 'admin123')">System Admin (Admin)</span>
+  </div>
+
+  <main>
+    <!-- TAB 1: CATALOG & SEARCH -->
+    <section id="tab-catalog" class="tab-content active">
+      <div class="stats-grid" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-label">Total Titles</div>
+          <div class="stat-value" id="statTitles">-</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Total Copies</div>
+          <div class="stat-value" id="statCopies">-</div>
+        </div>
+        <div class="stat-card indigo">
+          <div class="stat-label">Available In Stock</div>
+          <div class="stat-value" id="statAvailable">-</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">Active Loans</div>
+          <div class="stat-value" id="statLoans">-</div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" class="filter-input" id="searchKeyword" placeholder="Search by title, author, or ISBN..." onkeyup="filterBooks()">
+        <select class="filter-select" id="searchCategory" onchange="filterBooks()">
+          <option value="">All Categories</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Algorithms">Algorithms</option>
+          <option value="Programming">Programming</option>
+          <option value="Artificial Intelligence">Artificial Intelligence</option>
+          <option value="Software Architecture">Software Architecture</option>
+          <option value="Databases">Databases</option>
+          <option value="Operating Systems">Operating Systems</option>
+          <option value="Networking">Networking</option>
+          <option value="Machine Learning">Machine Learning</option>
+          <option value="Software Craftsmanship">Software Craftsmanship</option>
+        </select>
+        <button class="btn" onclick="loadBooks()">🔄 Refresh</button>
+      </div>
+
+      <div class="books-grid" id="booksGrid">
+        <!-- Loaded dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 2: CIRCULATION DESK -->
+    <section id="tab-circulation" class="tab-content">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px;">
+        <!-- Borrow Form -->
+        <div class="data-table-card" style="padding: 20px;">
+          <h3 style="margin-bottom: 16px; color: #fff;">📥 Borrow / Issue Book</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+            Enforces atomic checkout, 14-day return period, max 3 active books quota, and fine check.
+          </p>
+          <div class="form-group">
+            <label>Select Book</label>
+            <select class="form-input" id="borrowBookSelect"></select>
+          </div>
+          <button class="btn" style="width: 100%; margin-top: 10px;" onclick="submitBorrow()">Borrow Selected Book</button>
+        </div>
+
+        <!-- Global Active Loans for Return & Renewal -->
+        <div class="data-table-card">
+          <div class="card-title">
+            <span>🔄 Active Circulation Loans</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Instant Return & Renewal</span>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Book Title</th>
+                  <th>Borrower</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="circulationLoansTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MEMBER PORTAL -->
+    <section id="tab-member" class="tab-content">
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+        <div>
+          <!-- Active Loans -->
+          <div class="data-table-card">
+            <div class="card-title">📖 My Active Loans & Approaching Due Dates</div>
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Loan #</th>
+                    <th>Title</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="memberLoansTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Borrowing History -->
+          <div class="data-table-card">
+            <div class="card-title">📜 My Borrowing Ledger</div>
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Loan #</th>
+                    <th>Title</th>
+                    <th>Borrowed Date</th>
+                    <th>Due Date</th>
+                    <th>Returned</th>
+                  </tr>
+                </thead>
+                <tbody id="memberHistoryTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overdue Fines & Payments -->
+        <div>
+          <div class="data-table-card">
+            <div class="card-title">💰 Overdue Fines</div>
+            <div style="padding: 16px;">
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">Outstanding Balance</div>
+              <div style="font-size: 2rem; font-weight: 700; color: #f87171;" id="memberFinesTotal">₹0.00</div>
+            </div>
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="memberFinesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: LIBRARIAN & ADMIN DESK -->
+    <section id="tab-admin" class="tab-content">
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px;">
+        <!-- Add Book Form -->
+        <div class="data-table-card" style="padding: 20px;">
+          <h3 style="margin-bottom: 14px; color: #fff;">➕ Add New Book to Catalog</h3>
+          <div class="form-group">
+            <label>ISBN</label>
+            <input type="text" class="form-input" id="addIsbn" placeholder="e.g. 978-0131103627">
+          </div>
+          <div class="form-group">
+            <label>Book Title</label>
+            <input type="text" class="form-input" id="addTitle" placeholder="Book Title">
+          </div>
+          <div class="form-group">
+            <label>Author(s)</label>
+            <input type="text" class="form-input" id="addAuthor" placeholder="Author name">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <input type="text" class="form-input" id="addCategory" placeholder="e.g. Computer Science">
+          </div>
+          <div class="form-group">
+            <label>Total Copies</label>
+            <input type="number" class="form-input" id="addCopies" value="3" min="1">
+          </div>
+          <div class="form-group">
+            <label>Shelf Location</label>
+            <input type="text" class="form-input" id="addShelf" placeholder="e.g. Shelf G-04">
+          </div>
+          <button class="btn" style="width: 100%; margin-top: 8px;" onclick="submitAddBook()">Save Book to Catalog</button>
+        </div>
+
+        <!-- Institutional Metrics & Audit -->
+        <div>
+          <div class="data-table-card">
+            <div class="card-title">🔍 System Audit Trail</div>
+            <div style="overflow-x: auto; max-height: 480px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Event</th>
+                    <th>Actor</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody id="auditTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: AGILE SCRUM BOARD -->
+    <section id="tab-scrum" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+          <h2 style="font-size: 1.3rem; color: #fff;">Agile Scrum Kanban Board</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">5-Stage Workflow: Backlog ➔ To Do ➔ In Progress ➔ Review/Testing ➔ Done</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <a href="/kanban_board.html" target="_blank" class="btn btn-secondary">🚀 Open Full-Screen Kanban</a>
+          <button class="btn" onclick="loadKanban()">🔄 Refresh Board</button>
+        </div>
+      </div>
+
+      <div class="kanban-grid" id="kanbanGrid">
+        <!-- Columns loaded dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Login Modal -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>User Authentication</h3>
+        <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-input" id="loginUser" placeholder="Enter username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-input" id="loginPass" placeholder="Enter password">
+      </div>
+      <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 18px;">
+        <button class="btn btn-secondary" onclick="closeLoginModal()">Cancel</button>
+        <button class="btn" onclick="submitLogin()">Log In</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <footer>
+    <p>Library Management System &copy; 2026 | Built for B.Tech Agile Methodologies (AM) Project-Based Learning</p>
+    <p>Student / Scrum Lead: <strong>Annika Jha</strong> | Persistent SQLite Database | Pure Python Architecture</p>
+  </footer>
+
+  <script>
+    let currentUser = { id: 1, username: 'aarav_p', full_name: 'Aarav Patel', role: 'member' };
+    let cachedBooks = [];
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.style.borderColor = isError ? '#ef4444' : '#10b981';
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3500);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+
+      if (tabId === 'catalog') { loadBooks(); loadStats(); }
+      if (tabId === 'circulation') { loadCirculation(); }
+      if (tabId === 'member') { loadMemberData(); }
+      if (tabId === 'admin') { loadAudits(); }
+      if (tabId === 'scrum') { loadKanban(); }
+    }
+
+    function openLoginModal() { document.getElementById('loginModal').classList.add('show'); }
+    function closeLoginModal() { document.getElementById('loginModal').classList.remove('show'); }
+
+    async function quickLogin(username, password) {
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentUser = data.user;
+          updateUserBadge();
+          showToast(`Logged in as ${currentUser.full_name} (${currentUser.role})`);
+          loadMemberData();
+        } else {
+          showToast(data.error, true);
+        }
+      } catch (e) {
+        showToast('Login failed: ' + e.message, true);
+      }
+    }
+
+    async function submitLogin() {
+      const u = document.getElementById('loginUser').value;
+      const p = document.getElementById('loginPass').value;
+      await quickLogin(u, p);
+      closeLoginModal();
+    }
+
+    function updateUserBadge() {
+      document.getElementById('sessionUserName').innerText = currentUser.full_name;
+      const r = document.getElementById('sessionRole');
+      r.innerText = currentUser.role.toUpperCase();
+      r.className = 'role-pill role-' + currentUser.role;
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/stats');
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('statTitles').innerText = data.stats.total_titles;
+          document.getElementById('statCopies').innerText = data.stats.total_copies;
+          document.getElementById('statAvailable').innerText = data.stats.available_copies;
+          document.getElementById('statLoans').innerText = data.stats.active_loans;
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function loadBooks() {
+      try {
+        const res = await fetch('/api/books');
+        const data = await res.json();
+        if (data.success) {
+          cachedBooks = data.books;
+          renderBooks(cachedBooks);
+          populateBorrowSelect(cachedBooks);
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    function renderBooks(books) {
+      const grid = document.getElementById('booksGrid');
+      grid.innerHTML = '';
+      if (!books.length) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">No books matched your criteria.</div>';
+        return;
+      }
+      books.forEach(b => {
+        const inStock = b.available_copies > 0;
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.innerHTML = `
+          <div>
+            <div class="book-header">
+              <span class="book-category">${b.category}</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">${b.publication_year}</span>
+            </div>
+            <h3 class="book-title">${b.title}</h3>
+            <p class="book-author">by ${b.author}</p>
+            <div class="book-meta">
+              <span><strong>ISBN:</strong> ${b.isbn}</span>
+              <span><strong>Location:</strong> ${b.shelf_location}</span>
+              <span><strong>Publisher:</strong> ${b.publisher || 'N/A'}</span>
+            </div>
+          </div>
+          <div class="book-footer">
+            <div class="stock-indicator ${inStock ? 'stock-in' : 'stock-out'}">
+              <span>●</span>
+              <span>${b.available_copies} of ${b.total_copies} In Stock</span>
+            </div>
+            ${inStock ? 
+              `<button class="btn" style="padding: 6px 12px;" onclick="borrowBookQuick(${b.id})">Borrow</button>` :
+              `<button class="btn btn-secondary" style="padding: 6px 12px;" onclick="reserveBookQuick(${b.id})">Reserve</button>`
+            }
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterBooks() {
+      const kw = document.getElementById('searchKeyword').value.toLowerCase();
+      const cat = document.getElementById('searchCategory').value.toLowerCase();
+      const filtered = cachedBooks.filter(b => {
+        const matchKw = !kw || b.title.toLowerCase().includes(kw) || b.author.toLowerCase().includes(kw) || b.isbn.toLowerCase().includes(kw);
+        const matchCat = !cat || b.category.toLowerCase() === cat;
+        return matchKw && matchCat;
+      });
+      renderBooks(filtered);
+    }
+
+    function populateBorrowSelect(books) {
+      const sel = document.getElementById('borrowBookSelect');
+      sel.innerHTML = '';
+      books.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.id;
+        opt.innerText = `${b.title} (${b.available_copies} available)`;
+        if (b.available_copies <= 0) opt.disabled = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    async function borrowBookQuick(bookId) {
+      try {
+        const res = await fetch('/api/borrow', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ user_id: currentUser.id, book_id: bookId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Successfully borrowed "${data.borrow.title}"! Due: ${data.borrow.due_date.slice(0, 10)}`);
+          loadBooks();
+          loadStats();
+        } else {
+          showToast(data.error, true);
+        }
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    async function reserveBookQuick(bookId) {
+      try {
+        const res = await fetch('/api/reserve', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ user_id: currentUser.id, book_id: bookId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Placed hold reservation #${data.reservation.reservation_id} for "${data.reservation.title}"!`);
+        } else {
+          showToast(data.error, true);
+        }
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    async function submitBorrow() {
+      const bId = document.getElementById('borrowBookSelect').value;
+      await borrowBookQuick(bId);
+    }
+
+    async function loadCirculation() {
+      try {
+        const res = await fetch('/api/loans');
+        const data = await res.json();
+        if (data.success) {
+          const tbody = document.getElementById('circulationLoansTable');
+          tbody.innerHTML = '';
+          const activeLoans = data.loans.filter(l => l.status === 'Borrowed' || l.status === 'Overdue');
+          if (!activeLoans.length) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">Zero active circulation loans.</td></tr>';
+            return;
+          }
+          activeLoans.forEach(l => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>#${l.id}</td>
+              <td><strong>${l.title}</strong></td>
+              <td>${l.full_name || ('User #' + l.user_id)}</td>
+              <td>${l.due_date.slice(0, 10)}</td>
+              <td><span class="role-pill ${l.status === 'Overdue' ? 'role-admin' : 'role-member'}">${l.status}</span></td>
+              <td>
+                <button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="returnBook(${l.id})">Return</button>
+                <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="renewBook(${l.id})">Renew</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function returnBook(borrowId) {
+      try {
+        const res = await fetch('/api/return', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ borrow_id: borrowId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          let msg = `Returned "${data.result.title}" successfully.`;
+          if (data.result.fine_amount > 0) msg += ` (Assessed late fine of ₹${data.result.fine_amount.toFixed(2)})`;
+          showToast(msg);
+          loadCirculation();
+          loadBooks();
+          loadStats();
+          loadMemberData();
+        } else {
+          showToast(data.error, true);
+        }
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    async function renewBook(borrowId) {
+      try {
+        const res = await fetch('/api/renew', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ borrow_id: borrowId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Renewed "${data.renewal.title}". New due date: ${data.renewal.new_due_date.slice(0, 10)}`);
+          loadCirculation();
+          loadMemberData();
+        } else {
+          showToast(data.error, true);
+        }
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    async function loadMemberData() {
+      try {
+        // Loans
+        const loansRes = await fetch(`/api/loans?user_id=${currentUser.id}`);
+        const loansData = await loansRes.json();
+        const loansTbody = document.getElementById('memberLoansTable');
+        loansTbody.innerHTML = '';
+        if (loansData.loans && loansData.loans.length) {
+          loansData.loans.forEach(l => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>#${l.id}</td>
+              <td><strong>${l.title}</strong></td>
+              <td>${l.due_date.slice(0, 10)} ${l.is_overdue ? '<span style="color: #f87171;">(Late)</span>' : ''}</td>
+              <td><span class="role-pill ${l.is_overdue ? 'role-admin' : 'role-member'}">${l.status}</span></td>
+              <td>
+                <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="renewBook(${l.id})">Renew (+14d)</button>
+              </td>
+            `;
+            loansTbody.appendChild(tr);
+          });
+        } else {
+          loansTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 16px;">No active loans.</td></tr>';
+        }
+
+        // Fines
+        const finesRes = await fetch(`/api/fines?user_id=${currentUser.id}`);
+        const finesData = await finesRes.json();
+        document.getElementById('memberFinesTotal').innerText = `₹${(finesData.unpaid_total || 0).toFixed(2)}`;
+        const finesTbody = document.getElementById('memberFinesTable');
+        finesTbody.innerHTML = '';
+        if (finesData.fines && finesData.fines.length) {
+          finesData.fines.forEach(f => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${f.title}</td>
+              <td>₹${f.amount.toFixed(2)}</td>
+              <td><span class="role-pill ${f.paid_status === 'Paid' ? 'role-member' : 'role-admin'}">${f.paid_status}</span></td>
+              <td>
+                ${f.paid_status === 'Unpaid' ? `<button class="btn" style="padding: 4px 8px; font-size: 0.75rem;" onclick="payFine(${f.id})">Pay</button>` : 'Settled'}
+              </td>
+            `;
+            finesTbody.appendChild(tr);
+          });
+        } else {
+          finesTbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 16px;">Zero fines recorded.</td></tr>';
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function payFine(fineId) {
+      try {
+        const res = await fetch('/api/fines/pay', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ fine_id: fineId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Settled fine of ₹${data.payment.amount.toFixed(2)}.`);
+          loadMemberData();
+        } else {
+          showToast(data.error, true);
+        }
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    async function submitAddBook() {
+      const isbn = document.getElementById('addIsbn').value;
+      const title = document.getElementById('addTitle').value;
+      const author = document.getElementById('addAuthor').value;
+      const category = document.getElementById('addCategory').value;
+      const copies = parseInt(document.getElementById('addCopies').value) || 1;
+      const shelf = document.getElementById('addShelf').value;
+
+      try {
+        const res = await fetch('/api/books', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ isbn, title, author, category, total_copies: copies, shelf_location: shelf })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Added "${data.book.title}" to catalog!`);
+          loadBooks();
+          loadStats();
+          document.getElementById('addIsbn').value = '';
+          document.getElementById('addTitle').value = '';
+          document.getElementById('addAuthor').value = '';
+        } else {
+          showToast(data.error, true);
+        }
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    async function loadAudits() {
+      try {
+        const res = await fetch('/api/audit');
+        const data = await res.json();
+        if (data.success) {
+          const tbody = document.getElementById('auditTable');
+          tbody.innerHTML = '';
+          data.logs.forEach(a => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="font-size: 0.75rem; color: var(--text-muted);">${a.created_at.slice(11, 19)}</td>
+              <td><span class="role-pill role-librarian">${a.action_type}</span></td>
+              <td>${a.user_name || 'System'}</td>
+              <td style="font-size: 0.8rem;">${a.details}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function loadKanban() {
+      try {
+        const res = await fetch('/api/scrum/kanban');
+        const data = await res.json();
+        if (data.success) {
+          const grid = document.getElementById('kanbanGrid');
+          grid.innerHTML = '';
+          const cols = ["Backlog", "To Do", "In Progress", "Review/Testing", "Done"];
+          cols.forEach(c => {
+            const items = data.columns[c] || [];
+            const colDiv = document.createElement('div');
+            colDiv.className = 'kanban-column';
+            colDiv.innerHTML = `
+              <div class="col-header">
+                <span>${c}</span>
+                <span class="col-badge">${items.length}</span>
+              </div>
+              <div class="col-cards">
+                ${items.map(it => `
+                  <div class="kanban-card">
+                    <div class="card-top">
+                      <span class="card-code">${it.code}</span>
+                      <span class="card-prio ${it.priority.toLowerCase().includes('high') || it.priority.toLowerCase().includes('must') ? 'prio-high' : it.priority.toLowerCase().includes('med') || it.priority.toLowerCase().includes('should') ? 'prio-med' : 'prio-low'}">
+                        ${it.priority}
+                      </span>
+                    </div>
+                    <div class="card-text">${it.title}</div>
+                    <div class="card-bot">
+                      <span>${it.type === 'STORY' ? it.points + ' pts' : 'Task'}</span>
+                      <span>@${it.assignee}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+            grid.appendChild(colDiv);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // Initial Load
+    window.onload = () => {
+      loadStats();
+      loadBooks();
+    };
+  </script>
+</body>
+</html>

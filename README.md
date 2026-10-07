@@ -175,6 +175,16 @@ Library-Management/
 ├── run.bat                           # Windows one-click execution batch launcher
 ├── .gitignore                        # Git ignore patterns for Python, IDEs, and SQLite
 │
+├── ITL/                              # Dedicated Information Technology Lab (ITL) Subproject
+│   ├── app.py                        # Standalone Web Application with embedded REST API
+│   ├── run.bat                       # One-click lab runner (starts server & browser)
+│   ├── ITL_LAB_MANUAL.md             # Complete lab manual with viva script & exam Q&A
+│   ├── README.md                     # Quickstart guide for ITL lab evaluation
+│   ├── requirements.txt              # Standard library dependency specification
+│   ├── src/                          # Standalone circulation & Scrum services
+│   ├── templates/                    # Web dashboard frontend template
+│   └── tests/                        # 16-case automated test suite
+│
 ├── src/                              # Core application source code
 │   ├── __init__.py                   # Package marker
 │   ├── main.py                       # Application entry point, CLI menus & --demo runner
