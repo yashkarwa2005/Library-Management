@@ -250,7 +250,70 @@ pip install -r requirements.txt
 
 ---
 
-## 13. Running the Application
+## 13. GitHub Scrum Project Setup (One-Click Setup)
+
+This PBL includes an automated **One-Click GitHub Project Setup** system that dynamically provisions Scrum Labels, Milestones, User Story Issues, and a GitHub Projects V2 Kanban board directly inside **your own GitHub repository**.
+
+> [!IMPORTANT]
+> The setup system is 100% self-contained and tokenless. It uses GitHub CLI authentication (`gh`), dynamically detects your repository remote, and requires **no personal access tokens** stored in code.
+
+### Step 1: Create Your Own GitHub Repository
+Go to [GitHub](https://github.com/new) and create a new repository for your project (e.g. `Library-Management` or your chosen name). It can be Public or Private.
+
+### Step 2: Clone Your Repository
+Clone your new repository to your local computer:
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+```
+
+### Step 3: Copy/Extract This PBL Into the Repository
+Extract the contents of this PBL ZIP folder directly into your cloned repository directory. Ensure the `.github` directory, `setup-project.bat`, and `src/` folders are located at the root of the repository.
+
+### Step 4: Open the Repository Folder
+Open a terminal (Command Prompt, PowerShell, or Windows Terminal) inside the root of your repository folder.
+
+### Step 5: Run setup-project.bat
+Run the one-click setup script:
+```cmd
+setup-project.bat
+```
+*(Or simply double-click `setup-project.bat` from Windows File Explorer).*
+
+### Step 6: Authenticate with Your GitHub Account
+If you are not already logged into GitHub CLI on your computer, the script will guide you through authenticating with **YOUR OWN GitHub account** via secure web browser login:
+```text
+gh auth login -w -s repo,project
+```
+> [!NOTE]
+> Make sure your GitHub account has admin/write permissions on the repository so it can create Issues, Labels, and Projects.
+
+### Step 7: Automatic Repository Detection
+The script automatically queries:
+```bash
+git remote get-url origin
+```
+It dynamically extracts your `OWNER` and `REPOSITORY` without requiring manual typing. It supports both HTTPS (`https://github.com/owner/repo.git`) and SSH (`git@github.com:owner/repo.git`) remotes.
+
+### Step 8: Automatic Scrum Asset Creation
+The script automatically reads `.github/project-setup.json` and provisions:
+- **13 Agile Labels:** Color-coded priority, type, and status badges.
+- **5 Sprint Milestones:** Corresponding to Sprints 1 through 5.
+- **12 INVEST User Story Issues:** With full descriptions, MoSCoW priorities, story points, and Gherkin acceptance criteria checklists. Built-in duplicate prevention (`[US-01]` identifiers) guarantees that re-running the script will **not** create duplicate issues!
+- **GitHub Projects V2 Kanban Board:** Creates or links the project board.
+- **Project Fields:** Configures `Priority`, `Sprint`, `Type`, and `Story Points`.
+- **Card Mapping:** Links all 12 issues to the Kanban board and assigns custom field values.
+
+### Step 9: Open Your Kanban Board
+At the conclusion of setup, the script displays your live Project URL:
+```text
+Open the Project:
+https://github.com/users/YOUR_USERNAME/projects/X
+```
+Click the link or open your repository's **Projects** tab on GitHub to show your live Scrum Kanban board during project evaluations and vivas!
+
+---
+
+## 14. Running the Application
 
 ### Option A: Web Application (Recommended for Comprehensive Exploration)
 Launch the standalone web application:
@@ -287,7 +350,7 @@ python src/main.py --kanban
 
 ---
 
-## 14. Running the Automated Test Suite
+## 15. Running the Automated Test Suite
 
 To execute the 16 unit and integration test cases:
 ```bash
@@ -310,7 +373,7 @@ For complete test case specifications and results, see [docs/TESTING.md](file://
 
 ---
 
-## 15. Future Scope
+## 16. Future Scope
 
 1. **RFID Hardware Gates:** Integration of UHF RFID antennas for automated hands-free book detection at library exits.
 2. **Automated WhatsApp / SMS Gateway:** Automated courtesy notifications sent 24 hours prior to loan expiry.
@@ -318,7 +381,7 @@ For complete test case specifications and results, see [docs/TESTING.md](file://
 
 ---
 
-## 16. Academic Declaration & Author
+## 17. Academic Declaration & Author
 
 This project was developed by **Annika Jha** for the **B.Tech 3rd-Year Agile Methodologies (AM)** course. All documentation, source code, tests, and Scrum artifacts represent authentic academic implementation designed to demonstrate mastery of Agile and Scrum engineering practices.
 
